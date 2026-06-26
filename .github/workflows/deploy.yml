@@ -1,0 +1,24 @@
+name: 🚀 Déploiement du Prototype
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Télécharger le code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Injecter l'URL du Webhook n8n
+        run: |
+          sed -i "s|WEBHOOK_URL_PLACEHOLDER|${{ secrets.N8N_WEBHOOK_URL }}|g" app.js
+
+      - name: 🌐 Publier sur GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
