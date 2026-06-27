@@ -67,7 +67,7 @@ btnStop.addEventListener('click', () => {
 // 4. Fonction pour expédier le fichier audio
 async function envoyerAudioVersN8N(blob) {
     // Le robot GitHub Actions va toujours remplacer cette ligne lors du déploiement !
-    const webhookUrl = "https://public-forks-enjoy.loca.lt/webhook-test/capture-vocale"; 
+    const webhookUrl = "https://lmxna-2001-4278-1f-453e-f23e-cc3-57d8-1c19.free.pinggy.net/webhook-test/capture-vocale"; 
 
     // Préparer les données comme si c'était un formulaire d'upload de fichier
     const formData = new FormData();
