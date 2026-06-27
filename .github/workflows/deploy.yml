@@ -1,48 +1,24 @@
-steps:
-  - name: 📥 Télécharger le code
-    uses: actions/checkout@v4
+name: 🚀 Déploiement du Prototype
 
-  - name: 🔐 Injecter l'URL du Webhook n8n
-    run: |
-      sed -i "s|WEBHOOK_URL_PLACEHOLDER|${{ secrets.N8N_WEBHOOK_URL }}|g" app.js
+on:
+  push:
+    branches:
+      - main
 
-  - name: 🌐 Publier sur GitHub Pages
-    uses: peaceiris/actions-gh-pages@v3
-    with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
-      publish_dir: .
-      # optionally specify publish_branch if you want a custom branch:
-      # publish_branch: gh-pages
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-  - name: ⏳ Wait for GitHub Pages build to finish
-    env:
-      REPO: ${{ github.repository }}
-      TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    run: |
-      set -euo pipefail
-      sudo apt-get update -y
-      sudo apt-get install -y jq curl
-      OWNER_REPO="$REPO"
-      AUTH="Authorization: token $TOKEN"
-      INTERVAL=10
-      MAX_MINUTES=30
-      MAX_ITER=$((MAX_MINUTES*60/INTERVAL))
-      i=0
-      while [ $i -lt $MAX_ITER ]; do
-        resp=$(curl -s -H "$AUTH" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$OWNER_REPO/pages/builds/latest")
-        status=$(echo "$resp" | jq -r .status // empty)
-        if [ "$status" = "built" ]; then
-          echo "✅ Pages build succeeded"
-          exit 0
-        fi
-        if [ "$status" = "errored" ]; then
-          echo "❌ Pages build errored; build output follows:"
-          echo "$resp" | jq -r .output || true
-          exit 1
-        fi
-        echo "Pages build status: ${status:-unknown} — waiting $INTERVAL seconds..."
-        sleep $INTERVAL
-        i=$((i+1))
-      done
-      echo "Timed out waiting for Pages build after ${MAX_MINUTES} minutes" >&2
-      exit 1
+    steps:
+      - name: 📥 Télécharger le code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Injecter l'URL du Webhook n8n
+        run: |
+          sed -i "s|WEBHOOK_URL_PLACEHOLDER|${{ secrets.N8N_WEBHOOK_URL }}|g" app.js
+
+      - name: 🌐 Publier sur GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
